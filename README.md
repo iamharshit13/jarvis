@@ -2,7 +2,7 @@
 
 Just A Rather Very Intelligent System
 
-J.A.R.V.I.S. is an experimental AI operating system project inspired by Iron Man. The long-term vision lives in [docs/vision.md](/Users/harshit/Documents/Development/jarvis/docs/vision.md). This README is focused on development: how the project is structured, how to run it, and what to build next.
+J.A.R.V.I.S. is an experimental AI operating system project inspired by Iron Man. The long-term vision lives in [docs/vision.md](https://github.com/iamharshit13/jarvis/blob/main/docs/vision.md). This README is focused on development: how the project is structured, how to run it, and what to build next.
 
 Current status: **Milestone 1 — First Alive Version** has started. The repository contains a runnable CLI, a mock model provider, a core assistant loop, basic configuration, logging, and a standard-library test.
 
@@ -67,12 +67,12 @@ User input
 
 Key files:
 
-* [apps/cli/main.py](/Users/harshit/Documents/Development/jarvis/apps/cli/main.py) — terminal entry point
-* [packages/jarvis-core/jarvis_core/assistant.py](/Users/harshit/Documents/Development/jarvis/packages/jarvis-core/jarvis_core/assistant.py) — core assistant loop
-* [packages/jarvis-core/jarvis_core/llm/base.py](/Users/harshit/Documents/Development/jarvis/packages/jarvis-core/jarvis_core/llm/base.py) — model provider contract
-* [packages/jarvis-core/jarvis_core/llm/mock.py](/Users/harshit/Documents/Development/jarvis/packages/jarvis-core/jarvis_core/llm/mock.py) — offline mock provider
-* [packages/jarvis-core/jarvis_core/config/settings.py](/Users/harshit/Documents/Development/jarvis/packages/jarvis-core/jarvis_core/config/settings.py) — environment-based settings
-* [packages/jarvis-core/tests/test_assistant.py](/Users/harshit/Documents/Development/jarvis/packages/jarvis-core/tests/test_assistant.py) — first test
+* [apps/cli/main.py](https://github.com/iamharshit13/jarvis/blob/main/apps/cli/main.py) — terminal entry point
+* [packages/jarvis-core/jarvis_core/assistant.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/jarvis_core/assistant.py) — core assistant loop
+* [packages/jarvis-core/jarvis_core/llm/base.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/jarvis_core/llm/base.py) — model provider contract
+* [packages/jarvis-core/jarvis_core/llm/mock.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/jarvis_core/llm/mock.py) — offline mock provider
+* [packages/jarvis-core/jarvis_core/config/settings.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/jarvis_core/config/settings.py) — environment-based settings
+* [packages/jarvis-core/tests/test_assistant.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/tests/test_assistant.py) — first test
 
 ---
 
@@ -141,7 +141,7 @@ Planned packages:
 
 # Configuration
 
-Copy [.env.example](/Users/harshit/Documents/Development/jarvis/.env.example) to `.env` when real providers are added.
+Copy [.env.example](https://github.com/iamharshit13/jarvis/blob/main/.env.example) to `.env` when real providers are added.
 
 Current environment variables:
 
