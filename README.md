@@ -1,4 +1,4 @@
-# J.A.R.V.I.S.
+# J.A.R.V.I.S. 
 
 Just A Rather Very Intelligent System
 
@@ -8,7 +8,7 @@ Current status: **Milestone 1 — First Alive Version** has started. The reposit
 
 ---
 
-# Quick Start
+## Quick Start
 
 Run the local CLI:
 
@@ -38,7 +38,7 @@ The first version uses a mock model provider by default, so it works without API
 
 ---
 
-# Development Goals
+## Development Goals
 
 The project should grow through small runnable slices. Each slice should add a real capability without hiding complexity behind fragile demos.
 
@@ -52,7 +52,7 @@ Current priorities:
 
 ---
 
-# Current Architecture
+## Current Architecture
 
 The current implementation is intentionally small:
 
@@ -76,7 +76,7 @@ Key files:
 
 ---
 
-# Repository Structure
+## Repository Structure
 
 ```text
 jarvis/
@@ -139,7 +139,7 @@ Planned packages:
 
 ---
 
-# Configuration
+## Configuration
 
 Copy [.env.example](https://github.com/iamharshit13/jarvis/blob/main/.env.example) to `.env` when real providers are added.
 
@@ -157,9 +157,9 @@ The project does not load `.env` automatically yet. For now, export variables in
 
 ---
 
-# Buildable Slices
+## Buildable Slices
 
-## Slice 0 — Project Foundation
+### Slice 0 — Project Foundation
 
 Goal: create the base repository, development workflow, configuration system, and documentation.
 
@@ -182,7 +182,7 @@ Next:
 * add linting dependencies or standardize on no-dependency checks for now
 * add contribution notes
 
-## Slice 1 — Text-Based Conversational Core
+### Slice 1 — Text-Based Conversational Core
 
 Goal: build the first usable assistant loop through a terminal or simple local interface.
 
@@ -203,7 +203,7 @@ Next:
 * streaming responses
 * conversation persistence
 
-## Slice 2 — Tool Calling & Local Actions
+### Slice 2 — Tool Calling & Local Actions
 
 Goal: allow J.A.R.V.I.S. to execute approved local tools safely.
 
@@ -216,7 +216,7 @@ Planned:
 * guarded shell command tool
 * audit log of actions
 
-## Slice 3 — Memory System
+### Slice 3 — Memory System
 
 Goal: make conversations persistent and personalized.
 
@@ -229,7 +229,7 @@ Planned:
 * vector search later
 * memory review and deletion controls
 
-## Slice 4 — Planning Engine
+### Slice 4 — Planning Engine
 
 Goal: convert broad user goals into structured plans and task execution.
 
@@ -242,7 +242,7 @@ Planned:
 * interruption and resume support
 * plan explanation
 
-## Slice 5 — Voice Interface
+### Slice 5 — Voice Interface
 
 Goal: make J.A.R.V.I.S. conversational through speech.
 
@@ -255,7 +255,7 @@ Planned:
 * interruption handling
 * low-latency streaming
 
-## Slice 6 — Desktop & App Automation
+### Slice 6 — Desktop & App Automation
 
 Goal: allow J.A.R.V.I.S. to help with real workflows on the local machine.
 
@@ -268,7 +268,7 @@ Planned:
 * calendar and email integrations
 * permissioned desktop actions
 
-## Slice 7 — Agentic Workflows
+### Slice 7 — Agentic Workflows
 
 Goal: allow J.A.R.V.I.S. to run longer tasks through specialized agents.
 
@@ -281,7 +281,7 @@ Planned:
 * tool-specific agents
 * failure recovery
 
-## Slice 8 — Multimodal Perception
+### Slice 8 — Multimodal Perception
 
 Goal: allow J.A.R.V.I.S. to understand images, screenshots, camera input, documents, and audio context.
 
@@ -294,7 +294,7 @@ Planned:
 * object recognition
 * environment summaries
 
-## Slice 9 — Smart Home & IoT Integration
+### Slice 9 — Smart Home & IoT Integration
 
 Goal: connect J.A.R.V.I.S. to physical environments.
 
@@ -307,7 +307,7 @@ Planned:
 * environment monitoring
 * permission policies for physical actions
 
-## Slice 10 — Robotics & Embodied Intelligence
+### Slice 10 — Robotics & Embodied Intelligence
 
 Goal: extend J.A.R.V.I.S. into robotics and spatial intelligence.
 
@@ -322,7 +322,7 @@ Planned:
 
 ---
 
-# Technical Stack
+## Technical Stack
 
 The stack should stay modular so pieces can be replaced as the system evolves.
 
@@ -357,7 +357,7 @@ Future:
 
 ---
 
-# Development Process
+## Development Process
 
 Each feature should move through the same loop:
 
@@ -383,7 +383,7 @@ Development rules:
 
 ---
 
-# Immediate Next Tasks
+## Immediate Next Tasks
 
 1. Add provider selection in the CLI based on `JARVIS_MODEL_PROVIDER`.
 2. Add an OpenAI-compatible provider behind the `ModelProvider` interface.
