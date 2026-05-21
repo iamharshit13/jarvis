@@ -1,4 +1,4 @@
-# J.A.R.V.I.S. 
+# J.A.R.V.I.S.
 
 Just A Rather Very Intelligent System
 
@@ -70,7 +70,9 @@ Key files:
 * [apps/cli/main.py](https://github.com/iamharshit13/jarvis/blob/main/apps/cli/main.py) — terminal entry point
 * [packages/jarvis-core/jarvis_core/assistant.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/jarvis_core/assistant.py) — core assistant loop
 * [packages/jarvis-core/jarvis_core/llm/base.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/jarvis_core/llm/base.py) — model provider contract
+* [packages/jarvis-core/jarvis_core/llm/factory.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/jarvis_core/llm/factory.py) — provider selection
 * [packages/jarvis-core/jarvis_core/llm/mock.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/jarvis_core/llm/mock.py) — offline mock provider
+* [packages/jarvis-core/jarvis_core/llm/openai_compatible.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/jarvis_core/llm/openai_compatible.py) — OpenAI-compatible provider
 * [packages/jarvis-core/jarvis_core/config/settings.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/jarvis_core/config/settings.py) — environment-based settings
 * [packages/jarvis-core/tests/test_assistant.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/tests/test_assistant.py) — first test
 
@@ -151,9 +153,13 @@ JARVIS_LOG_LEVEL=INFO
 JARVIS_MODEL_PROVIDER=mock
 JARVIS_MODEL_NAME=jarvis-mock
 JARVIS_MEMORY_DB_PATH=data/jarvis.sqlite3
+JARVIS_SYSTEM_PROMPT_PATH=
+OPENAI_API_KEY=
+OPENAI_BASE_URL=https://api.openai.com/v1
+OPENAI_TIMEOUT_SECONDS=120
 ```
 
-The project does not load `.env` automatically yet. For now, export variables in the shell or keep the defaults.
+The project loads `.env` automatically from the current directory or a parent directory. Shell environment variables still take priority over values in `.env`.
 
 ---
 
@@ -193,13 +199,14 @@ Delivered:
 * user input loop
 * model provider interface
 * mock provider
+* OpenAI-compatible provider
+* provider selection from settings
+* default J.A.R.V.I.S. system prompt
+* optional custom system prompt path
 * conversation history in memory
 
 Next:
 
-* system prompt / personality profile
-* OpenAI-compatible provider
-* provider selection from settings
 * streaming responses
 * conversation persistence
 
@@ -335,7 +342,6 @@ Current:
 
 Near-term:
 
-* OpenAI-compatible model provider
 * Pydantic for typed settings and tool schemas
 * SQLite for local memory
 * FastAPI for local API
@@ -385,10 +391,8 @@ Development rules:
 
 ## Immediate Next Tasks
 
-1. Add provider selection in the CLI based on `JARVIS_MODEL_PROVIDER`.
-2. Add an OpenAI-compatible provider behind the `ModelProvider` interface.
-3. Add a system prompt / personality profile file.
-4. Add SQLite-backed conversation persistence.
-5. Add the first safe tool registry.
+1. Add SQLite-backed conversation persistence.
+2. Add the first safe tool registry.
+3. Add CLI commands like `/help`, `/status`, `/clear`, and `/model`.
 
 The first goal is still simple: make J.A.R.V.I.S. reliable as a local text assistant before expanding into voice, agents, perception, and automation.

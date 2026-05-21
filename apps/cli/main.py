@@ -10,20 +10,26 @@ if str(CORE_PACKAGE_DIR) not in sys.path:
 
 from jarvis_core.assistant import JarvisAssistant
 from jarvis_core.config import load_settings
-from jarvis_core.llm.mock import MockModelProvider
+from jarvis_core.llm import build_model_provider
 from jarvis_core.logging import configure_logging
+from jarvis_core.prompts import load_system_prompt
 
 
 def build_assistant() -> JarvisAssistant:
     settings = load_settings()
     configure_logging(settings.log_level)
 
-    provider = MockModelProvider(model_name=settings.model_name)
-    return JarvisAssistant(model_provider=provider)
+    provider = build_model_provider(settings)
+    system_prompt = load_system_prompt(settings.system_prompt_path)
+    return JarvisAssistant(model_provider=provider, system_prompt=system_prompt)
 
 
 def main() -> None:
-    assistant = build_assistant()
+    try:
+        assistant = build_assistant()
+    except ValueError as error:
+        print(f"J.A.R.V.I.S. startup failed: {error}")
+        return
 
     print("J.A.R.V.I.S. online. Type 'exit' or 'quit' to end the session.")
     while True:
@@ -35,7 +41,12 @@ def main() -> None:
         if not user_input:
             continue
 
-        response = assistant.respond(user_input)
+        try:
+            response = assistant.respond(user_input)
+        except RuntimeError as error:
+            print(f"J.A.R.V.I.S.: Model provider error: {error}")
+            continue
+
         print(f"J.A.R.V.I.S.: {response}")
 
 

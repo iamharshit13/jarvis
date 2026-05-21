@@ -1,0 +1,6 @@
+{
+  "include": ["apps", "packages"],
+  "extraPaths": ["packages/jarvis-core"],
+  "pythonVersion": "3.11"
+}
+
