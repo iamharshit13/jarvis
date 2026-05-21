@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>J.A.R.V.I.S.</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <aside class="sidebar" aria-label="Session panel">
+        <div class="brand">
+          <div class="mark" aria-hidden="true">
+            <span></span>
+          </div>
+          <div>
+            <h1>J.A.R.V.I.S.</h1>
+            <p id="modelLabel">Initializing</p>
+          </div>
+        </div>
+
+        <section class="panel">
+          <div class="panel-title">
+            <h2>Session</h2>
+            <button id="refreshSessions" class="icon-button" title="Refresh sessions" type="button">
+              ↻
+            </button>
+          </div>
+          <label class="field">
+            <span>Session ID</span>
+            <input id="sessionInput" autocomplete="off" spellcheck="false" />
+          </label>
+          <div class="button-row">
+            <button id="loadSession" type="button">Load</button>
+            <button id="newSession" type="button">New</button>
+          </div>
+          <div id="sessionList" class="session-list" aria-live="polite"></div>
+        </section>
+
+        <section class="panel compact">
+          <h2>Status</h2>
+          <dl class="status-grid">
+            <div>
+              <dt>Provider</dt>
+              <dd id="providerValue">-</dd>
+            </div>
+            <div>
+              <dt>Memory</dt>
+              <dd id="memoryValue">-</dd>
+            </div>
+          </dl>
+        </section>
+      </aside>
+
+      <section class="workspace" aria-label="Conversation">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Local assistant core</p>
+            <h2>Conversation</h2>
+          </div>
+          <button id="clearSession" class="danger" type="button">Clear</button>
+        </header>
+
+        <div id="messages" class="messages" aria-live="polite"></div>
+
+        <form id="chatForm" class="composer">
+          <textarea
+            id="messageInput"
+            rows="2"
+            placeholder="Ask J.A.R.V.I.S."
+            autocomplete="off"
+          ></textarea>
+          <button id="sendButton" type="submit">Send</button>
+        </form>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
+

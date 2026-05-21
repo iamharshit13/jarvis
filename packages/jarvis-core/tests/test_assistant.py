@@ -1,6 +1,7 @@
 import unittest
 
 from jarvis_core.assistant import JarvisAssistant
+from jarvis_core.conversation.message import Message
 from jarvis_core.llm.mock import MockModelProvider
 
 
@@ -27,6 +28,35 @@ class AssistantTests(unittest.TestCase):
         self.assertEqual(model_messages[0].role, "system")
         self.assertEqual(model_messages[0].content, "You are test J.A.R.V.I.S.")
         self.assertEqual(len(assistant.history), 2)
+
+    def test_assistant_loads_existing_session_history(self) -> None:
+        class InMemoryStore:
+            def __init__(self) -> None:
+                self.messages = [Message(role="user", content="Previous question")]
+
+            def create_session(self, session_id: str, title: str | None = None) -> None:
+                self.session_id = session_id
+
+            def add_message(self, session_id: str, message: Message) -> None:
+                self.messages.append(message)
+
+            def list_messages(self, session_id: str) -> list[Message]:
+                return list(self.messages)
+
+            def list_sessions(self, limit: int = 10) -> list[object]:
+                return []
+
+            def clear_session(self, session_id: str) -> None:
+                self.messages.clear()
+
+        assistant = JarvisAssistant(
+            model_provider=MockModelProvider(),
+            memory=InMemoryStore(),
+            session_id="existing-session",
+        )
+
+        self.assertEqual(len(assistant.history), 1)
+        self.assertEqual(assistant.history[0].content, "Previous question")
 
 
 if __name__ == "__main__":

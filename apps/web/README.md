@@ -1,4 +1,18 @@
 # J.A.R.V.I.S. Web
 
-The web app will become the local dashboard for conversations, tasks, memory, tools, logs, and connected systems.
+The web app is the local browser interface for conversations and session memory.
 
+Current features:
+
+* chat with J.A.R.V.I.S.
+* session id loading
+* new session creation
+* recent session list
+* history loading
+* current session clearing
+
+Run from the repository root:
+
+```bash
+./scripts/web.sh
+```

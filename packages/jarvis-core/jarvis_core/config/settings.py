@@ -13,6 +13,7 @@ class Settings:
     model_provider: str = "mock"
     model_name: str = "jarvis-mock"
     memory_db_path: str = "data/jarvis.sqlite3"
+    session_id: str = ""
     system_prompt_path: str = ""
     openai_api_key: str = ""
     openai_base_url: str = "https://api.openai.com/v1"
@@ -28,6 +29,7 @@ def load_settings() -> Settings:
         model_provider=os.getenv("JARVIS_MODEL_PROVIDER", Settings.model_provider),
         model_name=os.getenv("JARVIS_MODEL_NAME", Settings.model_name),
         memory_db_path=os.getenv("JARVIS_MEMORY_DB_PATH", Settings.memory_db_path),
+        session_id=os.getenv("JARVIS_SESSION_ID", Settings.session_id),
         system_prompt_path=os.getenv("JARVIS_SYSTEM_PROMPT_PATH", Settings.system_prompt_path),
         openai_api_key=os.getenv("OPENAI_API_KEY", Settings.openai_api_key),
         openai_base_url=os.getenv("OPENAI_BASE_URL", Settings.openai_base_url),

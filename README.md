@@ -16,6 +16,24 @@ Run the local CLI:
 python3 apps/cli/main.py
 ```
 
+Run the local web app:
+
+```bash
+./scripts/web.sh
+```
+
+Then open:
+
+```text
+http://127.0.0.1:8765
+```
+
+Resume or create a specific session:
+
+```bash
+python3 apps/cli/main.py --session-id main
+```
+
 Or use the helper script:
 
 ```bash
@@ -35,6 +53,19 @@ printf 'hello\nexit\n' | python3 apps/cli/main.py
 ```
 
 The first version uses a mock model provider by default, so it works without API keys.
+
+CLI commands:
+
+```text
+/help
+/status
+/model
+/history
+/session
+/sessions
+/clear
+/exit
+```
 
 ---
 
@@ -61,19 +92,23 @@ User input
   -> CLI app
   -> JarvisAssistant
   -> ModelProvider interface
-  -> MockModelProvider
+  -> MockModelProvider or OpenAICompatibleProvider
+  -> SQLite conversation memory
   -> assistant response
 ```
 
 Key files:
 
 * [apps/cli/main.py](https://github.com/iamharshit13/jarvis/blob/main/apps/cli/main.py) — terminal entry point
+* [apps/api/server.py](https://github.com/iamharshit13/jarvis/blob/main/apps/api/server.py) — local web/API server
+* [apps/web/index.html](https://github.com/iamharshit13/jarvis/blob/main/apps/web/index.html) — browser interface
 * [packages/jarvis-core/jarvis_core/assistant.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/jarvis_core/assistant.py) — core assistant loop
 * [packages/jarvis-core/jarvis_core/llm/base.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/jarvis_core/llm/base.py) — model provider contract
 * [packages/jarvis-core/jarvis_core/llm/factory.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/jarvis_core/llm/factory.py) — provider selection
 * [packages/jarvis-core/jarvis_core/llm/mock.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/jarvis_core/llm/mock.py) — offline mock provider
 * [packages/jarvis-core/jarvis_core/llm/openai_compatible.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/jarvis_core/llm/openai_compatible.py) — OpenAI-compatible provider
 * [packages/jarvis-core/jarvis_core/config/settings.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/jarvis_core/config/settings.py) — environment-based settings
+* [packages/jarvis-core/jarvis_core/memory/sqlite_store.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/jarvis_core/memory/sqlite_store.py) — SQLite conversation memory
 * [packages/jarvis-core/tests/test_assistant.py](https://github.com/iamharshit13/jarvis/blob/main/packages/jarvis-core/tests/test_assistant.py) — first test
 
 ---
@@ -93,8 +128,12 @@ jarvis/
       main.py
     api/
       README.md
+      server.py
     web/
       README.md
+      index.html
+      styles.css
+      app.js
 
   packages/
     jarvis-core/
@@ -153,6 +192,7 @@ JARVIS_LOG_LEVEL=INFO
 JARVIS_MODEL_PROVIDER=mock
 JARVIS_MODEL_NAME=jarvis-mock
 JARVIS_MEMORY_DB_PATH=data/jarvis.sqlite3
+JARVIS_SESSION_ID=
 JARVIS_SYSTEM_PROMPT_PATH=
 OPENAI_API_KEY=
 OPENAI_BASE_URL=https://api.openai.com/v1
@@ -199,6 +239,8 @@ Status: started.
 Delivered:
 
 * user input loop
+* CLI commands
+* local web chat interface
 * model provider interface
 * mock provider
 * OpenAI-compatible provider
@@ -206,11 +248,13 @@ Delivered:
 * default J.A.R.V.I.S. system prompt
 * optional custom system prompt path
 * conversation history in memory
+* SQLite-backed conversation persistence
+* session resume by id
 
 Next:
 
 * streaming responses
-* conversation persistence
+* conversation summarization / context control
 
 ### Slice 2 — Tool Calling & Local Actions
 
@@ -393,8 +437,8 @@ Development rules:
 
 ## Immediate Next Tasks
 
-1. Add SQLite-backed conversation persistence.
+1. Add conversation summarization / context control.
 2. Add the first safe tool registry.
-3. Add CLI commands like `/help`, `/status`, `/clear`, and `/model`.
+3. Add audit logging for model calls and tool calls.
 
 The first goal is still simple: make J.A.R.V.I.S. reliable as a local text assistant before expanding into voice, agents, perception, and automation.
