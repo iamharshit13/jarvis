@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jarvis-ai-os"
+version = "0.1.0"
+description = "J.A.R.V.I.S. - an experimental cognitive AI operating system."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "ruff>=0.6.0",
+]
+
+[project.scripts]
+jarvis = "apps.cli.main:main"
+
+[tool.setuptools.packages.find]
+where = ["packages/jarvis-core", "."]
+include = ["jarvis_core*", "apps*"]
+
+[tool.pytest.ini_options]
+testpaths = ["packages/jarvis-core/tests"]
+pythonpath = ["packages/jarvis-core", "."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
