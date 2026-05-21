@@ -161,6 +161,8 @@ OPENAI_TIMEOUT_SECONDS=120
 
 The project loads `.env` automatically from the current directory or a parent directory. Shell environment variables still take priority over values in `.env`.
 
+Keep real secrets only in `.env` or your shell environment. Do not commit API keys, local tokens, generated databases, or logs.
+
 ---
 
 ## Buildable Slices
