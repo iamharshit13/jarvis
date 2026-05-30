@@ -19,6 +19,7 @@ from jarvis_core.llm import build_model_provider
 from jarvis_core.logging import configure_logging
 from jarvis_core.memory import SQLiteConversationMemory
 from jarvis_core.prompts import load_system_prompt
+from jarvis_core.tools import ToolContext, ToolRegistry, build_builtin_registry
 
 
 @dataclass(frozen=True)
@@ -26,6 +27,8 @@ class CliRuntime:
     assistant: JarvisAssistant
     settings: Settings
     memory: SQLiteConversationMemory
+    tools: ToolRegistry
+    tool_context: ToolContext
 
 
 def build_runtime(session_id_override: str | None = None) -> CliRuntime:
@@ -35,6 +38,7 @@ def build_runtime(session_id_override: str | None = None) -> CliRuntime:
     provider = build_model_provider(settings)
     system_prompt = load_system_prompt(settings.system_prompt_path)
     memory = SQLiteConversationMemory(settings.memory_db_path)
+    tools = build_builtin_registry()
     session_id = session_id_override or settings.session_id or str(uuid4())
     assistant = JarvisAssistant(
         model_provider=provider,
@@ -46,7 +50,13 @@ def build_runtime(session_id_override: str | None = None) -> CliRuntime:
         memory=memory,
         session_id=session_id,
     )
-    return CliRuntime(assistant=assistant, settings=settings, memory=memory)
+    return CliRuntime(
+        assistant=assistant,
+        settings=settings,
+        memory=memory,
+        tools=tools,
+        tool_context=ToolContext(root_dir=ROOT_DIR),
+    )
 
 
 def main() -> None:
@@ -93,7 +103,7 @@ def handle_command(command: str, runtime: CliRuntime) -> None:
     if normalized == "/help":
         print(
             "J.A.R.V.I.S.: Commands: /help, /status, /model, /history, "
-            "/session, /sessions, /clear, /exit"
+            "/session, /sessions, /tools, /tool, /clear, /exit"
         )
         return
 
@@ -138,12 +148,57 @@ def handle_command(command: str, runtime: CliRuntime) -> None:
         print_sessions(runtime)
         return
 
+    if normalized == "/tools":
+        print_tools(runtime)
+        return
+
+    if normalized.startswith("/tool "):
+        run_tool_command(command, runtime)
+        return
+
     if normalized == "/clear":
         assistant.clear_history()
         print("J.A.R.V.I.S.: Conversation history cleared for this session.")
         return
 
     print("J.A.R.V.I.S.: Unknown command. Type /help for available commands.")
+
+
+def parse_tool_args(parts: list[str]) -> dict[str, str]:
+    args: dict[str, str] = {}
+    for part in parts:
+        if "=" not in part:
+            raise ValueError(f"Tool arguments must use key=value format: {part}")
+        key, value = part.split("=", 1)
+        if not key:
+            raise ValueError("Tool argument keys cannot be empty.")
+        args[key] = value
+    return args
+
+
+def run_tool_command(command: str, runtime: CliRuntime) -> None:
+    parts = command.split()
+    if len(parts) < 2:
+        print("J.A.R.V.I.S.: Usage: /tool <name> [key=value ...]")
+        return
+
+    name = parts[1]
+    try:
+        args = parse_tool_args(parts[2:])
+        result = runtime.tools.run(name, args, runtime.tool_context)
+    except ValueError as error:
+        print(f"J.A.R.V.I.S.: Tool error: {error}")
+        return
+
+    print(f"J.A.R.V.I.S.: Tool result [{name}]")
+    print(result.content)
+
+
+def print_tools(runtime: CliRuntime) -> None:
+    print("J.A.R.V.I.S.: Available tools:")
+    for definition in runtime.tools.definitions():
+        params = ", ".join(definition.parameters) or "none"
+        print(f"- {definition.name}: {definition.description} params={params}")
 
 
 def parse_args() -> argparse.Namespace:

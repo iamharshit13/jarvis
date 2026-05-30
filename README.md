@@ -63,6 +63,8 @@ CLI commands:
 /history
 /session
 /sessions
+/tools
+/tool
 /clear
 /exit
 ```
@@ -253,6 +255,7 @@ Delivered:
 * SQLite-backed conversation persistence
 * session resume by id
 * context window limits for local model performance
+* safe read-only tool registry
 
 Next:
 
@@ -440,8 +443,8 @@ Development rules:
 
 ## Immediate Next Tasks
 
-1. Add the first safe tool registry.
-2. Add audit logging for model calls and tool calls.
+1. Add audit logging for model calls and tool calls.
+2. Add web UI support for manual tools.
 3. Add conversation summarization after context limits are reached.
 
 The first goal is still simple: make J.A.R.V.I.S. reliable as a local text assistant before expanding into voice, agents, perception, and automation.

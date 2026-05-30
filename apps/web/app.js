@@ -2,9 +2,11 @@ const state = {
   sessionId: localStorage.getItem("jarvis.sessionId") || "",
   status: null,
   sending: false,
+  stickToBottom: true,
 };
 
 const elements = {
+  activityStatus: document.querySelector("#activityStatus"),
   chatForm: document.querySelector("#chatForm"),
   contextValue: document.querySelector("#contextValue"),
   clearSession: document.querySelector("#clearSession"),
@@ -16,6 +18,7 @@ const elements = {
   newSession: document.querySelector("#newSession"),
   providerValue: document.querySelector("#providerValue"),
   refreshSessions: document.querySelector("#refreshSessions"),
+  scrollBottom: document.querySelector("#scrollBottom"),
   sendButton: document.querySelector("#sendButton"),
   sessionInput: document.querySelector("#sessionInput"),
   sessionList: document.querySelector("#sessionList"),
@@ -40,15 +43,23 @@ function setSessionId(sessionId) {
 }
 
 function renderMessages(messages) {
+  const shouldStick = shouldAutoScroll();
   elements.messages.innerHTML = "";
   if (!messages.length) {
-    appendMessage("assistant", "J.A.R.V.I.S. online. Awaiting instruction.");
+    appendMessage("assistant", "J.A.R.V.I.S. online. Awaiting instruction.", {
+      forceScroll: true,
+    });
     return;
   }
-  messages.forEach((message) => appendMessage(message.role, message.content));
+  messages.forEach((message) =>
+    appendMessage(message.role, message.content, { forceScroll: false }),
+  );
+  if (shouldStick) {
+    scrollMessagesToBottom();
+  }
 }
 
-function appendMessage(role, content) {
+function appendMessage(role, content, options = {}) {
   const item = document.createElement("article");
   item.className = `message ${role}`;
 
@@ -57,11 +68,62 @@ function appendMessage(role, content) {
   label.textContent = role === "user" ? "You" : role;
 
   const body = document.createElement("div");
+  body.className = "message-content";
   body.textContent = content;
 
   item.append(label, body);
   elements.messages.append(item);
-  elements.messages.scrollTop = elements.messages.scrollHeight;
+  if (options.forceScroll || shouldAutoScroll()) {
+    scrollMessagesToBottom();
+  }
+  return item;
+}
+
+function appendThinkingMessage() {
+  const item = appendMessage("assistant pending", "", { forceScroll: true });
+  const body = item.querySelector(".message-content");
+  body.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+  return item;
+}
+
+function removeMessage(item) {
+  if (item && item.parentElement) {
+    item.remove();
+  }
+}
+
+function shouldAutoScroll() {
+  const threshold = 96;
+  const distanceFromBottom =
+    elements.messages.scrollHeight - elements.messages.scrollTop - elements.messages.clientHeight;
+  return state.stickToBottom || distanceFromBottom < threshold;
+}
+
+function scrollMessagesToBottom() {
+  requestAnimationFrame(() => {
+    elements.messages.scrollTop = elements.messages.scrollHeight;
+    updateScrollButton();
+  });
+}
+
+function updateScrollButton() {
+  const distanceFromBottom =
+    elements.messages.scrollHeight - elements.messages.scrollTop - elements.messages.clientHeight;
+  state.stickToBottom = distanceFromBottom < 96;
+  elements.scrollBottom.classList.toggle("visible", !state.stickToBottom);
+}
+
+function setBusy(isBusy) {
+  state.sending = isBusy;
+  elements.sendButton.disabled = isBusy;
+  elements.loadSession.disabled = isBusy;
+  elements.newSession.disabled = isBusy;
+  elements.clearSession.disabled = isBusy;
+  elements.refreshSessions.disabled = isBusy;
+  elements.sessionInput.disabled = isBusy;
+  elements.sendButton.textContent = isBusy ? "Wait" : "Send";
+  elements.activityStatus.textContent = isBusy ? "Responding" : "Ready";
+  elements.activityStatus.classList.toggle("busy", isBusy);
 }
 
 function renderSessions(sessions) {
@@ -121,10 +183,9 @@ async function loadSession(sessionId) {
 }
 
 async function sendMessage(message) {
-  appendMessage("user", message);
-  state.sending = true;
-  elements.sendButton.disabled = true;
-  elements.sendButton.textContent = "Wait";
+  appendMessage("user", message, { forceScroll: true });
+  const pendingMessage = appendThinkingMessage();
+  setBusy(true);
 
   try {
     const payload = await requestJson("/api/message", {
@@ -132,14 +193,15 @@ async function sendMessage(message) {
       body: JSON.stringify({ session_id: state.sessionId, message }),
     });
     setSessionId(payload.session_id);
+    removeMessage(pendingMessage);
     renderMessages(payload.messages);
     await loadSessions();
   } catch (error) {
+    removeMessage(pendingMessage);
     appendMessage("error", error.message);
   } finally {
-    state.sending = false;
-    elements.sendButton.disabled = false;
-    elements.sendButton.textContent = "Send";
+    setBusy(false);
+    elements.messageInput.focus();
   }
 }
 
@@ -150,6 +212,7 @@ elements.chatForm.addEventListener("submit", async (event) => {
     return;
   }
   elements.messageInput.value = "";
+  resizeComposer();
   await sendMessage(message);
 });
 
@@ -159,6 +222,8 @@ elements.messageInput.addEventListener("keydown", (event) => {
     elements.chatForm.requestSubmit();
   }
 });
+
+elements.messageInput.addEventListener("input", resizeComposer);
 
 elements.loadSession.addEventListener("click", async () => {
   const sessionId = elements.sessionInput.value.trim();
@@ -174,6 +239,13 @@ elements.newSession.addEventListener("click", async () => {
 
 elements.refreshSessions.addEventListener("click", loadSessions);
 
+elements.scrollBottom.addEventListener("click", () => {
+  state.stickToBottom = true;
+  scrollMessagesToBottom();
+});
+
+elements.messages.addEventListener("scroll", updateScrollButton);
+
 elements.clearSession.addEventListener("click", async () => {
   const payload = await requestJson("/api/clear", {
     method: "POST",
@@ -183,11 +255,18 @@ elements.clearSession.addEventListener("click", async () => {
   await loadSessions();
 });
 
+function resizeComposer() {
+  elements.messageInput.style.height = "auto";
+  elements.messageInput.style.height = `${Math.min(elements.messageInput.scrollHeight, 180)}px`;
+}
+
 async function boot() {
   try {
     await loadStatus();
     await loadHistory();
     await loadSessions();
+    resizeComposer();
+    scrollMessagesToBottom();
   } catch (error) {
     appendMessage("error", error.message);
   }

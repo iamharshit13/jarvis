@@ -62,10 +62,16 @@
             <p class="eyebrow">Local assistant core</p>
             <h2>Conversation</h2>
           </div>
-          <button id="clearSession" class="danger" type="button">Clear</button>
+          <div class="topbar-actions">
+            <span id="activityStatus" class="activity-status">Ready</span>
+            <button id="clearSession" class="danger" type="button">Clear</button>
+          </div>
         </header>
 
-        <div id="messages" class="messages" aria-live="polite"></div>
+        <div class="message-stage">
+          <div id="messages" class="messages" aria-live="polite"></div>
+          <button id="scrollBottom" class="scroll-bottom" type="button">↓</button>
+        </div>
 
         <form id="chatForm" class="composer">
           <textarea
