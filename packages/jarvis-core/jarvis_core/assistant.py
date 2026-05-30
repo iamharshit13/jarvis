@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from uuid import uuid4
 
+from jarvis_core.conversation.context import ContextWindow
 from jarvis_core.conversation.message import Message
 from jarvis_core.llm.base import ModelProvider
 from jarvis_core.memory import ConversationMemory
@@ -15,6 +16,7 @@ class JarvisAssistant:
 
     model_provider: ModelProvider
     system_prompt: str = DEFAULT_SYSTEM_PROMPT
+    context_window: ContextWindow = field(default_factory=ContextWindow)
     memory: ConversationMemory | None = None
     session_id: str = field(default_factory=lambda: str(uuid4()))
     history: list[Message] = field(default_factory=list)
@@ -43,7 +45,18 @@ class JarvisAssistant:
 
     def messages_for_model(self) -> list[Message]:
         system_message = Message(role="system", content=self.system_prompt)
-        return [system_message, *self.history]
+        return [system_message, *self.context_window.select(self.history)]
+
+    def context_stats(self) -> dict[str, int]:
+        selected = self.context_window.select(self.history)
+        return {
+            "stored_messages": len(self.history),
+            "model_messages": len(selected),
+            "stored_chars": sum(len(message.content) for message in self.history),
+            "model_chars": sum(len(message.content) for message in selected),
+            "max_messages": self.context_window.max_messages,
+            "max_chars": self.context_window.max_chars,
+        }
 
     def clear_history(self) -> None:
         self.history.clear()

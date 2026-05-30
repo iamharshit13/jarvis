@@ -15,6 +15,8 @@ class Settings:
     memory_db_path: str = "data/jarvis.sqlite3"
     session_id: str = ""
     system_prompt_path: str = ""
+    context_max_messages: int = 20
+    context_max_chars: int = 12000
     openai_api_key: str = ""
     openai_base_url: str = "https://api.openai.com/v1"
     openai_timeout_seconds: float = 30.0
@@ -31,6 +33,12 @@ def load_settings() -> Settings:
         memory_db_path=os.getenv("JARVIS_MEMORY_DB_PATH", Settings.memory_db_path),
         session_id=os.getenv("JARVIS_SESSION_ID", Settings.session_id),
         system_prompt_path=os.getenv("JARVIS_SYSTEM_PROMPT_PATH", Settings.system_prompt_path),
+        context_max_messages=int(
+            os.getenv("JARVIS_CONTEXT_MAX_MESSAGES", str(Settings.context_max_messages))
+        ),
+        context_max_chars=int(
+            os.getenv("JARVIS_CONTEXT_MAX_CHARS", str(Settings.context_max_chars))
+        ),
         openai_api_key=os.getenv("OPENAI_API_KEY", Settings.openai_api_key),
         openai_base_url=os.getenv("OPENAI_BASE_URL", Settings.openai_base_url),
         openai_timeout_seconds=float(

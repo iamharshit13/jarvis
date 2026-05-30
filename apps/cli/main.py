@@ -14,6 +14,7 @@ if str(CORE_PACKAGE_DIR) not in sys.path:
 from jarvis_core.assistant import JarvisAssistant
 from jarvis_core.config import load_settings
 from jarvis_core.config.settings import Settings
+from jarvis_core.conversation import ContextWindow
 from jarvis_core.llm import build_model_provider
 from jarvis_core.logging import configure_logging
 from jarvis_core.memory import SQLiteConversationMemory
@@ -38,6 +39,10 @@ def build_runtime(session_id_override: str | None = None) -> CliRuntime:
     assistant = JarvisAssistant(
         model_provider=provider,
         system_prompt=system_prompt,
+        context_window=ContextWindow(
+            max_messages=settings.context_max_messages,
+            max_chars=settings.context_max_chars,
+        ),
         memory=memory,
         session_id=session_id,
     )
@@ -93,12 +98,14 @@ def handle_command(command: str, runtime: CliRuntime) -> None:
         return
 
     if normalized == "/status":
+        context = assistant.context_stats()
         print(
             "J.A.R.V.I.S.: "
             f"provider={settings.model_provider}, "
             f"model={settings.model_name}, "
             f"session={assistant.session_id}, "
             f"messages={len(assistant.history)}, "
+            f"model_context={context['model_messages']}/{context['stored_messages']}, "
             f"memory={settings.memory_db_path}"
         )
         return
@@ -117,9 +124,13 @@ def handle_command(command: str, runtime: CliRuntime) -> None:
         return
 
     if normalized == "/session":
+        context = assistant.context_stats()
         print(
             "J.A.R.V.I.S.: "
-            f"session={assistant.session_id}, messages={len(assistant.history)}"
+            f"session={assistant.session_id}, "
+            f"messages={len(assistant.history)}, "
+            f"model_context={context['model_messages']} messages, "
+            f"{context['model_chars']} chars"
         )
         return
 

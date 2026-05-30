@@ -1,6 +1,7 @@
 import unittest
 
 from jarvis_core.assistant import JarvisAssistant
+from jarvis_core.conversation import ContextWindow
 from jarvis_core.conversation.message import Message
 from jarvis_core.llm.mock import MockModelProvider
 
@@ -27,6 +28,24 @@ class AssistantTests(unittest.TestCase):
 
         self.assertEqual(model_messages[0].role, "system")
         self.assertEqual(model_messages[0].content, "You are test J.A.R.V.I.S.")
+        self.assertEqual(len(assistant.history), 2)
+
+    def test_messages_for_model_are_context_limited(self) -> None:
+        assistant = JarvisAssistant(
+            model_provider=MockModelProvider(),
+            system_prompt="system",
+            context_window=ContextWindow(max_messages=1, max_chars=1000),
+        )
+        assistant.history.extend(
+            [
+                Message(role="user", content="old"),
+                Message(role="assistant", content="new"),
+            ]
+        )
+
+        model_messages = assistant.messages_for_model()
+
+        self.assertEqual([message.content for message in model_messages], ["system", "new"])
         self.assertEqual(len(assistant.history), 2)
 
     def test_assistant_loads_existing_session_history(self) -> None:

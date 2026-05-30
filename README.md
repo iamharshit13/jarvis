@@ -194,6 +194,8 @@ JARVIS_MODEL_NAME=jarvis-mock
 JARVIS_MEMORY_DB_PATH=data/jarvis.sqlite3
 JARVIS_SESSION_ID=
 JARVIS_SYSTEM_PROMPT_PATH=
+JARVIS_CONTEXT_MAX_MESSAGES=20
+JARVIS_CONTEXT_MAX_CHARS=12000
 OPENAI_API_KEY=
 OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_TIMEOUT_SECONDS=120
@@ -250,11 +252,12 @@ Delivered:
 * conversation history in memory
 * SQLite-backed conversation persistence
 * session resume by id
+* context window limits for local model performance
 
 Next:
 
 * streaming responses
-* conversation summarization / context control
+* conversation summarization after context limits are reached
 
 ### Slice 2 — Tool Calling & Local Actions
 
@@ -437,8 +440,8 @@ Development rules:
 
 ## Immediate Next Tasks
 
-1. Add conversation summarization / context control.
-2. Add the first safe tool registry.
-3. Add audit logging for model calls and tool calls.
+1. Add the first safe tool registry.
+2. Add audit logging for model calls and tool calls.
+3. Add conversation summarization after context limits are reached.
 
 The first goal is still simple: make J.A.R.V.I.S. reliable as a local text assistant before expanding into voice, agents, perception, and automation.

@@ -6,6 +6,7 @@ const state = {
 
 const elements = {
   chatForm: document.querySelector("#chatForm"),
+  contextValue: document.querySelector("#contextValue"),
   clearSession: document.querySelector("#clearSession"),
   loadSession: document.querySelector("#loadSession"),
   memoryValue: document.querySelector("#memoryValue"),
@@ -97,6 +98,7 @@ async function loadStatus() {
   elements.modelLabel.textContent = status.model;
   elements.providerValue.textContent = status.provider;
   elements.memoryValue.textContent = status.memory_db_path;
+  elements.contextValue.textContent = `${status.context_max_messages} messages / ${status.context_max_chars} chars`;
 }
 
 async function loadHistory() {
@@ -192,4 +194,3 @@ async function boot() {
 }
 
 boot();
-

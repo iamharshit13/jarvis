@@ -18,6 +18,7 @@ if str(CORE_PACKAGE_DIR) not in sys.path:
 from jarvis_core.assistant import JarvisAssistant
 from jarvis_core.config import load_settings
 from jarvis_core.config.settings import Settings
+from jarvis_core.conversation import ContextWindow
 from jarvis_core.llm import build_model_provider
 from jarvis_core.llm.base import ModelProvider
 from jarvis_core.logging import configure_logging
@@ -39,6 +40,10 @@ class WebRuntime:
         return JarvisAssistant(
             model_provider=self.model_provider,
             system_prompt=self.system_prompt,
+            context_window=ContextWindow(
+                max_messages=self.settings.context_max_messages,
+                max_chars=self.settings.context_max_chars,
+            ),
             memory=self.memory,
             session_id=session_id,
         )
@@ -68,6 +73,8 @@ class JarvisRequestHandler(BaseHTTPRequestHandler):
                     "base_url": self.runtime.settings.openai_base_url,
                     "memory_db_path": self.runtime.settings.memory_db_path,
                     "default_session_id": self.runtime.default_session_id,
+                    "context_max_messages": self.runtime.settings.context_max_messages,
+                    "context_max_chars": self.runtime.settings.context_max_chars,
                 }
             )
             return
@@ -220,4 +227,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
